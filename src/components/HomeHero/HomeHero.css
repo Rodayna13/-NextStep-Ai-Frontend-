@@ -1,0 +1,50 @@
+.hero {
+    text-align: center;
+    padding: 80px 20px;
+    background: linear-gradient(135deg, #f8faff, #eef2ff);
+}
+
+.hero h2 {
+    font-size: 28px;
+    margin-bottom: 25px;
+    color: #333;
+}
+
+.hero-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.btn-primary {
+    padding: 10px 20px;
+    background: #607AFB;
+    border: none;
+    color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary:hover {
+    background: #4e64d1;
+}
+
+.btn-outline {
+    padding: 10px 20px;
+    border: 1px solid #607AFB;
+    background: #fff;
+    color: #607AFB;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-outline:hover {
+    background: #f1f3ff;
+}
