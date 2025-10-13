@@ -1,0 +1,341 @@
+/* Form Input Wrapper */
+.form-input-wrapper {
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.form-input-wrapper:last-child {
+    margin-bottom: 0;
+}
+
+.form-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 8px;
+    letter-spacing: 0.025em;
+    line-height: 1.4;
+    transition: color 0.2s ease;
+}
+
+.form-label.required::after {
+    content: '*';
+    color: #ef4444;
+    margin-left: 4px;
+    font-size: 16px;
+}
+
+.form-input-wrapper:focus-within .form-label {
+    color: #3b82f6;
+}
+
+.form-input-wrapper.error .form-label {
+    color: #ef4444;
+}
+
+.form-input-wrapper.success .form-label {
+    color: #10b981;
+}
+
+/* Label Variants */
+.form-label.small {
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6b7280;
+}
+
+.form-label.large {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.form-label.inline {
+    display: inline-block;
+    margin-right: 12px;
+    margin-bottom: 0;
+    min-width: 120px;
+    vertical-align: top;
+}
+
+/* Label with Icon */
+.form-label.with-icon {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.form-label.with-icon svg {
+    width: 16px;
+    height: 16px;
+    color: #6b7280;
+}
+
+/* Floating Label Effect (Optional) */
+.form-input-wrapper.floating {
+    position: relative;
+    margin-top: 20px;
+}
+
+.form-input-wrapper.floating .form-label {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    background: white;
+    padding: 0 4px;
+    pointer-events: none;
+    transition: all 0.2s ease;
+    z-index: 1;
+}
+
+.form-input-wrapper.floating:focus-within .form-label,
+.form-input-wrapper.floating.has-value .form-label {
+    top: 0;
+    transform: translateY(-50%);
+    font-size: 12px;
+    font-weight: 600;
+    color: #3b82f6;
+}
+
+/* Main Input Container */
+.form-input {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 0 12px;
+    min-height: 42px;
+    transition: all 0.2s ease;
+}
+
+.form-input input {
+    width: 100%;
+}
+
+.form-input:hover {
+    border-color: #9ca3af;
+}
+
+.form-input:focus-within {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Input and Textarea Styles */
+.form-input input,
+.form-input textarea {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 14px;
+    color: #111827;
+    padding: 10px 0;
+    font-family: inherit;
+}
+
+.form-input input::placeholder,
+.form-input textarea::placeholder {
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+/* Logo Styles */
+.form-input-logo {
+    margin-right: 8px;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    object-fit: contain;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.form-input-logo:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+}
+
+/* AI Button Styles */
+.ai-gen-btn {
+    border: none;
+    background: none;
+    padding: 6px;
+    margin-left: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ai-gen-btn:hover {
+    background-color: #f3f4f6;
+}
+
+.ai-gen-icon {
+    transition: color 0.2s ease;
+}
+
+.ai-gen-btn:hover .ai-gen-icon {
+    color: #f97316 !important;
+}
+
+.ai-icon-animate {
+    animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+}
+
+
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+}
+
+/* Firefox */
+input[type="date"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+/* To prevent extra padding in Chrome */
+input[type="date"]::-webkit-inner-spin-button,
+input[type="date"]::-webkit-clear-button {
+    display: none;
+}
+
+input[type="date"]::placeholder {
+    display: none;
+}
+
+input[type="date"]:invalid::before {
+    content: attr(placeholder);
+    color: gray;
+}
+
+input[type="date"]:focus:invalid::before {
+    content: "";
+}
+
+
+
+
+
+
+
+/* Textarea Specific Styles */
+.form-input-textarea {
+    align-items: flex-start;
+    min-height: 100px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.form-input-textarea textarea {
+    resize: vertical;
+    min-height: 70px;
+    line-height: 1.5;
+}
+
+.form-input-textarea .ai-gen-btn {
+    align-self: flex-start;
+    margin-top: 4px;
+}
+
+/* Error State */
+.form-input.error {
+    border-color: #ef4444;
+    background-color: #fef2f2;
+}
+
+.form-input.error:focus-within {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+/* Success State */
+.form-input.success {
+    border-color: #10b981;
+    background-color: #f0fdf4;
+}
+
+/* Disabled State */
+.form-input.disabled {
+    background-color: #f9fafb;
+    border-color: #e5e7eb;
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.form-input.disabled input,
+.form-input.disabled textarea {
+    cursor: not-allowed;
+    color: #9ca3af;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .form-input {
+        min-height: 44px;
+        padding: 0 10px;
+    }
+
+    .form-input input,
+    .form-input textarea {
+        font-size: 16px;
+        /* Prevents zoom on iOS */
+        padding: 8px 0;
+    }
+
+    .ai-gen-btn {
+        padding: 4px;
+        margin-left: 6px;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    .form-input {
+        border-width: 2px;
+        border-color: #000;
+    }
+
+    .form-input:focus-within {
+        border-color: #0066cc;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+
+    .form-input,
+    .ai-gen-btn,
+    .form-input-logo {
+        transition: none;
+    }
+
+    .ai-icon-animate {
+        animation: none;
+    }
+}
