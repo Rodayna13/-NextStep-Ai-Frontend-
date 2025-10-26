@@ -10,9 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@pollinations/react": "^2.0.7",
     "@reduxjs/toolkit": "^2.9.0",
     "axios": "^1.12.2",
     "html2pdf.js": "^0.12.1",
+    "microsoft-cognitiveservices-speech-sdk": "^1.46.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-hook-form": "^7.64.0",
