@@ -4,7 +4,7 @@ const ModalHeader = () => (
         <div className="custom-modal-icon">
             <svg
                 className="icon"
-                fill="currentColor"
+                fill="white"
                 viewBox="0 0 24 24"
             >
                 <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 
@@ -16,7 +16,7 @@ const ModalHeader = () => (
               1.75 1.75-.784 1.75-1.75 
               1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 
               0v5.604h-3v-11h3v1.765c1.396-2.586 
-              7-2.777 7 2.476v6.759z"></path>
+              7-2.777 7 2.476v6.759z"/>
             </svg>
         </div>
         <h3>Import from LinkedIn</h3>
