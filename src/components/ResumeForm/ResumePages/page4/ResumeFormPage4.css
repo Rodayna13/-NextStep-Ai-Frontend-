@@ -1,0 +1,7 @@
+input[name^="skills"] {
+    font-size: 0.8rem;
+}
+
+input[name^="skills"]::placeholder {
+    font-size: 0.7rem;
+}

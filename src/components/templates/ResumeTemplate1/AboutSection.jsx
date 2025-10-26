@@ -1,4 +1,3 @@
-import React from 'react';
 import EditableElement from './EditableElement';
 
 const AboutSection = ({ 
@@ -17,8 +16,21 @@ const AboutSection = ({
             onDelete={onDelete}
         >
             <section>
-                <h2>Profile</h2>
-                <p>{about}</p>
+                <h2
+                    style={{
+                        fontSize: "1.45rem",
+                        fontWeight: 600,
+                        marginBottom: "1rem",
+                        color: "rgb(31, 41, 55)",
+                        borderBottom: "2px solid rgb(229, 231, 235)",
+                        paddingBottom: "0.25rem"
+                    }}
+                >
+                    Profile
+                </h2>
+                <p style={{ color: about ? "inherit" : "#9ca3af", fontStyle: about ? "normal" : "italic" }}>
+                    {about || "Add your profile here. Click edit to add or update your profile section."}
+                </p>
             </section>
         </EditableElement>
     );
