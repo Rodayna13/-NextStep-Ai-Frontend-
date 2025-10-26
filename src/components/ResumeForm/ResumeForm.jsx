@@ -51,7 +51,7 @@ const ResumeForm = () => {
 
     useEffect(() => {
         if (profile) {
-
+            console.log('profile in form:', profile);
             const formData = {
                 fullName: profile.fullName || '',
                 email: profile.email || profile.linkedinUrl || '',
@@ -76,9 +76,10 @@ const ResumeForm = () => {
                         startDate: parseStartEndDate(pos.caption).startDate || parseStartEndDate(exp.caption).startDate,
                         endDate: parseStartEndDate(pos.caption).endDate || parseStartEndDate(exp.caption).endDate
                     }))
-                })) || []
+                })) || [],
+                skills: profile.skills || []
             };
-
+            console.log('reset data', formData);
             reset(formData);
         }
     }, [profile, reset])

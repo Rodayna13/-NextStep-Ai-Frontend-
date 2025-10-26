@@ -43,6 +43,7 @@ const UseSuggestionsHook = ({ autoComplete, autoCompleteSortBy, register, name, 
                 setValue(name, suggestionHints[suggestionHintIndex]);
                 setSuggestionHints([]);
             }
+
             if (e.key === 'Alt') {
                 e.preventDefault();
                 setIsAltClicked(true);

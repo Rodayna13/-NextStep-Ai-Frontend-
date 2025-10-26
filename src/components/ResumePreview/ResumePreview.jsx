@@ -4,8 +4,8 @@ import ResumeTemplate1 from '../templates/ResumeTemplate1';
 import './ResumePreview.css';
 
 const ResumePreview = ({setColWidth , colWidth}) => {
-    const [zoomLevel, setZoomLevel] = useState(0.67);
-    const resumeRef = useRef();
+    const [zoomLevel, setZoomLevel] = useState(0.79);
+    const resumeRef = useRef(); 
 
 
     const handleZoomIn = () => {
@@ -17,19 +17,66 @@ const ResumePreview = ({setColWidth , colWidth}) => {
     };
 
     const handleResetZoom = () => {
-        setZoomLevel(0.67); // Reset to original size
+        setZoomLevel(0.80); // Reset to original size
     };
 
-    const handleDownload = () => {
+    const handleDownload = async () => {
         const element = resumeRef.current;
+        
+        // Convert images to base64 before generating PDF
+        await convertImagesToBase64(element);
+        
         const options = {
             margin: 0,
             filename: "Resume.pdf",
             image: { type: "jpeg", quality: 0.98 },
-            html2canvas: { scale: 2, scrollY: 0 },
+            html2canvas: { 
+                scale: 2, 
+                scrollY: 0,
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: '#ffffff'
+            },
             jsPDF: { unit: "pt", format: "a4", orientation: "portrait" }
         };
         html2pdf().set(options).from(element).save();
+    };
+
+    const convertImagesToBase64 = async (element) => {
+        const images = element.querySelectorAll('img');
+        const promises = Array.from(images).map(async (img) => {
+            try {
+                if (img.src && !img.src.startsWith('data:')) {
+                    const base64 = await convertImageToBase64(img.src);
+                    img.src = base64;
+                }
+            } catch (error) {
+                console.warn('Failed to convert image to base64:', error);
+            }
+        });
+        await Promise.all(promises);
+    };
+
+    const convertImageToBase64 = (url) => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
+                try {
+                    const base64 = canvas.toDataURL('image/jpeg', 0.9);
+                    resolve(base64);
+                } catch (error) {
+                    reject(error);
+                }
+            };
+            img.onerror = reject;
+            img.src = url;
+        });
     };
 
     return (
