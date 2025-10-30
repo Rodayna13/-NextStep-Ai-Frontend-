@@ -92,14 +92,6 @@
     margin-top: 25px;
 }
 
-.download-button {
-    background: #1f4e79;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-}
 
 /* Editable Elements */
 .editable-element {

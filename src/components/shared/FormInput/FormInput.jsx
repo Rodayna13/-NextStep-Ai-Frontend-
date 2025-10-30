@@ -1,13 +1,14 @@
 import { useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { RiAiGenerate2 } from "react-icons/ri";
-import AIPromptPopover from "../AIPromptPopover/AIPromptPopover";
+import AIPromptPopover from "../AIPromptPopover";
 import HintSuggestion from "../HintSuggestion";
 import PopUpSuggestions from "../HintSuggestion/PopUpSuggestions";
 import UseSuggestionsHook from "../HintSuggestion/UseSuggestionsHook";
 import "./style.css";
 
 const FormInput = (props) => {
+
     const {
         autoComplete = false,
         autoCompleteSortBy = "",
@@ -18,7 +19,8 @@ const FormInput = (props) => {
         rules,
         style,
         label,
-        logo
+        logo,
+        ...rest
     } = props;
     const { watch } = useFormContext();
     const [showAIPrompt, setShowAIPrompt] = useState(false);
@@ -27,7 +29,6 @@ const FormInput = (props) => {
 
 
 
-    const popoverRef = useRef(null);
 
     const {
         inputPorps,
@@ -43,22 +44,38 @@ const FormInput = (props) => {
         rules,
 
     });
+    // Prepare input props as an object
+    const inputFieldProps = {
+        dir: "auto",
+        id: name,
+        name,
+        type,
+        ...rest,
+        autoComplete: "off",
+        placeholder,
+        ...(register ? register(name, rules) : {}),
+        ...inputPorps,
+        
+    };
+
+
 
     return (
         <div className="form-input-wrapper" style={style}>
             {label && <label htmlFor={name} className="form-label">{label}</label>}
             <div className="form-input" >
                 {logo && <img src={logo} className="form-input-logo" alt="" />}
-                <input
-                    dir="auto"
-                    id={name}
-                    name={name}
-                    type={type}
-                    autoComplete="off"
-                    placeholder={placeholder}
-                    {...(register ? register(name, rules) : {})}
-                    {...inputPorps}
-                />
+
+                {type === 'text' ? (
+                    <input
+                        {...inputFieldProps}
+                    />
+                ) : (
+                    <textarea
+                        {...inputFieldProps}
+                    />
+                )}
+
 
                 <HintSuggestion
                     suggestionHints={suggestionHints}
@@ -88,11 +105,11 @@ const FormInput = (props) => {
                 </button>
 
                 <AIPromptPopover
+                    inputValue={inputValue}
+                    label={label}
                     showPopover={showAIPrompt}
-                    prompt={""}
-                    onPromptChange={() => { }}
-                    onPromptSubmit={() => { }}
-                    ref={popoverRef}
+                    setShowAIPrompt={setShowAIPrompt}
+                    name={name}
                 />
             </div>
         </div>

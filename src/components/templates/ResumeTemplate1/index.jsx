@@ -10,7 +10,7 @@ import ExperienceSection from "./ExperienceSection";
 import EducationSection from "./EducationSection";
 
 
-const ResumeTemplate1 = ({cvRef}) => {
+const ResumeTemplate1 = ({ cvRef }) => {
     // const cvRef = useRef();
     const { watch } = useFormContext();
     const [activeElement, setActiveElement] = useState(null);
@@ -46,17 +46,17 @@ const ResumeTemplate1 = ({cvRef}) => {
         ]
     };
 
-    const handleDownloadPdf = () => {
-        const element = cvRef.current;
-        const options = {
-            margin: 0,
-            filename: "My_CV.pdf",
-            image: { type: "jpeg", quality: 0.98 },
-            html2canvas: { scale: 2, scrollY: 0 },
-            jsPDF: { unit: "pt", format: "a4", orientation: "portrait" }
-        };
-        html2pdf().set(options).from(element).save();
-    };
+    // const handleDownloadPdf = () => {
+    //     const element = cvRef.current;
+    //     const options = {
+    //         margin: 0,
+    //         filename: "My_CV.pdf",
+    //         image: { type: "jpeg", quality: 0.98 },
+    //         html2canvas: { scale: 2, scrollY: 0 },
+    //         jsPDF: { unit: "pt", format: "a4", orientation: "portrait" }
+    //     };
+    //     html2pdf().set(options).from(element).save();
+    // };
 
     const handleElementClick = (elementId) => {
         setActiveElement(elementId);
@@ -89,6 +89,7 @@ const ResumeTemplate1 = ({cvRef}) => {
             >
                 {/* LEFT SIDEBAR */}
                 <div className="resume-sidebar">
+                    
                     <ProfileSection
                         activeElement={activeElement}
                         onElementClick={handleElementClick}
@@ -110,6 +111,7 @@ const ResumeTemplate1 = ({cvRef}) => {
                     />
 
                     <SkillsSection
+                        skills={watch('skills') || []}
                         activeElement={activeElement}
                         onElementClick={handleElementClick}
                         onEdit={handleEdit}
@@ -145,12 +147,7 @@ const ResumeTemplate1 = ({cvRef}) => {
                 </div>
             </div>
 
-            {/* DOWNLOAD BUTTON */}
-            <div className="download-btn-container">
-                <button onClick={handleDownloadPdf} className="download-button">
-                    Download as PDF
-                </button>
-            </div>
+  
         </div>
     );
 };

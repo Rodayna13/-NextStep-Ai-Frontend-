@@ -55,12 +55,44 @@
 }
 
 .custom-modal-icon {
-  background: #e0f0ff;
-  padding: 12px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin-top: 15px;
+}
+
+.custom-modal-icon svg {
+  transform: scale(1.4) rotate(20deg) translate(290px, 60px);
+  background-color: #22272e;
+  animation: swag 6s linear infinite;
+}
+
+@keyframes swag {
+
+  0% {
+    transform: rotate(20deg) translate(0);
+  }
+
+  20% {
+    transform: rotate(20deg) translate(100px, 120px);
+  }
+
+
+  40% {
+    transform: rotate(20deg) translate(100px, -60px);
+  }
+
+  60% {
+    transform: rotate(20deg) translate(200px, 90px);
+  }
+
+  70% {
+    transform: rotate(20deg) translate(190px, -90px);
+  }
+
+  80% {
+    transform: rotate(20deg) translate(290px, 60px);
+  }
+
+
+
 }
 
 .custom-modal-icon .icon {

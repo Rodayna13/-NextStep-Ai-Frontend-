@@ -1,6 +1,6 @@
 import { useFormContext } from 'react-hook-form'
-import FormInput from '../../shared/FormInput/FormInput'
-import FormTextarea from '../../shared/FormInput/FormTextarea'
+import FormInput from '../../../shared/FormInput/FormInput'
+import FormTextarea from '../../../shared/FormInput/FormTextarea'
 
 const ResumeFormPage1 = ({ isVisible }) => {
     const { register } = useFormContext();
@@ -50,8 +50,9 @@ const ResumeFormPage1 = ({ isVisible }) => {
 
 
 
-            <FormTextarea
+            <FormInput
                 label="About / Summary"
+                type="textarea"
                 name="about"
                 rows={6}
                 placeholder="Briefly describe your professional background..."
