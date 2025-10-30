@@ -1,0 +1,236 @@
+import { useEffect, useState, useRef, useCallback } from 'react';
+import { useSpeechRecognition } from '../../hooks/useSpeechRecognition';
+import useSpeak from './../../hooks/useSpeak';
+import useTranscription from './handleTranscription';
+
+const DemoPage = () => {
+    const speechRecognition = useSpeechRecognition();
+    const { handleSpeak, currentText, isPlaying, audioRef, handleAudioEnd } = useSpeak();
+    const { transcribeAudioSimple } = useTranscription();
+
+    const [history, setHistory] = useState([
+        { role: 'system', content: 'act as my clingy girlfriend and start interview in arabic language and egypt accent' },
+        { role: 'assistant', content: 'ask your first question about js' }
+    ]);
+
+    const [isProcessing, setIsProcessing] = useState(false);
+    const hasProcessedTranscript = useRef(false);
+
+    // Process AI response
+    const processAIResponse = useCallback(async (conversationHistory) => {
+        if (isProcessing) return;
+
+        setIsProcessing(true);
+        try {
+            const conversationText = conversationHistory
+                .map(item => typeof item === 'string' ? item : `${item.role}: ${item.content}`)
+                .join('\n');
+
+            const audioBlob = await handleSpeak(conversationText, 'nova');
+            const botResponse = await transcribeAudioSimple(audioBlob);
+
+            if (botResponse) {
+                setHistory(prev => [...prev, { role: 'assistant', content: botResponse }]);
+            }
+        } catch (error) {
+            console.error('Error processing AI response:', error);
+        } finally {
+            setIsProcessing(false);
+        }
+    }, [isProcessing, handleSpeak, transcribeAudioSimple]);
+
+    // Initialize conversation
+    useEffect(() => {
+        processAIResponse(history);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // Handle user speech completion
+    useEffect(() => {
+        if (
+            speechRecognition.isRecording &&
+            speechRecognition.transcript &&
+            !speechRecognition.isSpeaking &&
+            !isProcessing &&
+            !hasProcessedTranscript.current
+        ) {
+            hasProcessedTranscript.current = true;
+
+            const newHistory = [
+                ...history,
+                { role: 'user', content: speechRecognition.transcript }
+            ];
+
+            setHistory(newHistory);
+            speechRecognition.stopRecognition();
+
+            // Process AI response after a short delay to ensure state is updated
+            setTimeout(() => {
+                processAIResponse(newHistory);
+            }, 100);
+        }
+
+        // Reset flag when recording stops
+        if (!speechRecognition.isRecording) {
+            hasProcessedTranscript.current = false;
+        }
+    }, [
+        speechRecognition.isRecording,
+        speechRecognition.transcript,
+        speechRecognition.isSpeaking,
+        isProcessing,
+        history,
+        speechRecognition,
+        processAIResponse
+    ]);
+
+    const startRecording = () => {
+        if (!isProcessing && !isPlaying) {
+            audioRef.current?.pause();
+            audioRef.current.currentTime = 0;
+            speechRecognition.resetRecognition();
+            speechRecognition.startRecognition();
+        }
+    };
+
+
+
+
+    return (
+        <div className="demo-page">
+            <h1>Demo Page - AI Interview Coach</h1>
+
+            <div className="chat-history" style={{
+                maxHeight: '400px',
+                overflowY: 'auto',
+                border: '1px solid #ccc',
+                borderRadius: '8px',
+                padding: '15px',
+                marginBottom: '20px',
+                backgroundColor: '#f9f9f9'
+            }}>
+                <h3>Conversation History:</h3>
+                {history.map((item, index) => (
+                    <div key={index} style={{
+                        marginBottom: '10px',
+                        padding: '8px',
+                        borderRadius: '5px',
+                        backgroundColor: typeof item === 'string' ? '#e3f2fd' :
+                                       item.role === 'system' ? '#fff3e0' :
+                                       item.role === 'user' ? '#e8f5e8' : '#f3e5f5'
+                    }}>
+                        <strong style={{
+                            color: typeof item === 'string' ? '#1976d2' :
+                                   item.role === 'system' ? '#f57c00' :
+                                   item.role === 'user' ? '#388e3c' : '#7b1fa2'
+                        }}>
+                            {typeof item === 'string' ? 'Legacy' : item.role}:
+                        </strong> {typeof item === 'string' ? item : item.content}
+                    </div>
+                ))}
+            </div>
+
+            <div className="current-status">
+                {speechRecognition.interim && (
+                    <div style={{ marginBottom: '10px', fontStyle: 'italic', color: '#666' }}>
+                        <strong>Listening:</strong> {speechRecognition.interim}
+                    </div>
+                )}
+
+                {speechRecognition.transcript && (
+                    <div className="demo-page__transcript" style={{
+                        marginBottom: '10px',
+                        padding: '10px',
+                        backgroundColor: '#fff3cd',
+                        border: '1px solid #ffeaa7',
+                        borderRadius: '5px'
+                    }}>
+                        <p><strong>Current Transcript:</strong> {speechRecognition.transcript}</p>
+                    </div>
+                )}
+
+                {currentText && (
+                    <div className="demo-page__question" style={{
+                        marginBottom: '10px',
+                        padding: '10px',
+                        backgroundColor: '#d1ecf1',
+                        border: '1px solid #bee5eb',
+                        borderRadius: '5px'
+                    }}>
+                        <p><strong>AI Speaking:</strong> {currentText}</p>
+                        <p><strong>Status:</strong> {isPlaying ? '🔊 Playing...' : '🔇 Stopped'}</p>
+                    </div>
+                )}
+
+                {isProcessing && (
+                    <div style={{
+                        marginBottom: '10px',
+                        padding: '10px',
+                        backgroundColor: '#fff3cd',
+                        border: '1px solid #ffeaa7',
+                        borderRadius: '5px',
+                        textAlign: 'center'
+                    }}>
+                        <strong>🤖 Processing AI response...</strong>
+                    </div>
+                )}
+            </div>
+
+            <audio
+                ref={audioRef}
+                onEnded={handleAudioEnd}
+                className="demo-page__audio"
+            />
+
+            <div className="controls" style={{ marginTop: '20px' }}>
+                <button
+                    className={`btn ${speechRecognition.isRecording ? 'btn-danger' : 'btn-primary'}`}
+                    onClick={startRecording}
+                    disabled={isProcessing || isPlaying}
+                    style={{
+                        padding: '10px 20px',
+                        marginRight: '10px',
+                        border: 'none',
+                        borderRadius: '5px',
+                        cursor: isProcessing || isPlaying ? 'not-allowed' : 'pointer',
+                        opacity: isProcessing || isPlaying ? 0.6 : 1
+                    }}
+                >
+                    {speechRecognition.isRecording ? '🔴 Recording...' : '🎤 Start Recording'}
+                </button>
+
+                <button
+                    className="btn btn-secondary"
+                    onClick={() => {
+                        audioRef.current?.pause();
+                        speechRecognition.stopRecognition();
+                    }}
+                    style={{
+                        padding: '10px 20px',
+                        marginRight: '10px',
+                        border: 'none',
+                        borderRadius: '5px',
+                        cursor: 'pointer'
+                    }}
+                >
+                    ⏹️ Stop
+                </button>
+
+                <button
+                    className="btn btn-warning"
+                    onClick={() => speechRecognition.resetRecognition()}
+                    style={{
+                        padding: '10px 20px',
+                        border: 'none',
+                        borderRadius: '5px',
+                        cursor: 'pointer'
+                    }}
+                >
+                    � Reset
+                </button>
+            </div>
+        </div>
+    )
+}
+
+export default DemoPage

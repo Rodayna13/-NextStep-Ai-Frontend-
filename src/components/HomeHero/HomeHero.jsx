@@ -25,7 +25,7 @@ const HomeHero = () => {
         )
     }
     return (
-        <section className="hero mb-3">
+        <section className="hero">
 
             <h2>Ready to build resume</h2>
 

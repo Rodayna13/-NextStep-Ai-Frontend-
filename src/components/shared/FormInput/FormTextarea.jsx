@@ -17,6 +17,8 @@ const FormTextarea = ({ id, name, placeholder, register, rules, rows, label }) =
                 <button className="ai-gen-btn" type="button">
                     <RiAiGenerate2 className="ai-gen-icon" size={18} color="grey" />
                 </button>
+
+                
             </div>
         </div>
     )

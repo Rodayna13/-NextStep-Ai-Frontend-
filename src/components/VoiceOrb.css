@@ -1,0 +1,122 @@
+/* Main page layout */
+.voice-orb-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+}
+
+.voice-orb-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 40px;
+  text-align: center;
+  color: #111;
+}
+
+.voice-orb-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+/* Smooth animated orb gradient background */
+.voice-orb-gradient {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 50%, #d1e7ff 0%, #b3d8ff 25%, #6bb6ff 55%, #3a7bd5 100%);
+}
+
+.voice-orb-gradient::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 50% 50%, #d1e7ff 0%, #b3d8ff 25%, #6bb6ff 55%, #3a7bd5 100%);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.voice-orb-gradient.voice-orb-active::before {
+  opacity: 1;
+  animation: orb-smooth-move 6s ease-in-out infinite;
+}
+
+@keyframes orb-smooth-move {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(10%, -5%) rotate(90deg);
+  }
+  50% {
+    transform: translate(5%, 10%) rotate(180deg);
+  }
+  75% {
+    transform: translate(-10%, 5%) rotate(270deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(360deg);
+  }
+}
+
+.voice-orb-highlight {
+  position: absolute;
+  top: 18%;
+  left: 20%;
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, transparent 80%);
+  border-radius: 50%;
+  filter: blur(12px);
+  pointer-events: none;
+}
+
+.voice-orb-labels {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.voice-orb-name {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #222;
+}
+
+.voice-orb-desc {
+  font-size: 1rem;
+  color: #888;
+  margin-top: 4px;
+}
+
+.voice-orb-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.voice-orb-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #eee;
+  display: inline-block;
+  transition: background 0.2s;
+}
+
+.voice-orb-dot.active {
+  background: #3a7bd5;
+}

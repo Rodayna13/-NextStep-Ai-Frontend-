@@ -26,6 +26,7 @@ const ExperienceSection = ({
                 <React.Fragment key={index}>
                     {exp.company !== null && (
                         <div style={{ marginBottom: '1.25rem' }}>
+                            
                             <EditableElement
                                 id={`xexperience-company-${index}`}
                                 activeElement={activeElement}
@@ -34,7 +35,7 @@ const ExperienceSection = ({
                                 onDelete={onDelete}
                             >
                                 <div className='d-flex align-items-center gap-2' style={{ marginBottom: '0.75rem' }}>
-                                    {exp.logo && <img src={exp.logo} width={20} height={20} style={{ borderRadius: '2px' }} />}
+                                    {exp.logo && <img src={exp.logo} width={20} height={20} style={{ borderRadius: '2px' }} crossOrigin="anonymous" />}
                                     <h3 style={{ 
                                         fontSize: '1.1rem', 
                                         fontWeight: '600', 

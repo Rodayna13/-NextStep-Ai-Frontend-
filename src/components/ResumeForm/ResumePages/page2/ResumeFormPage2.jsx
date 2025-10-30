@@ -1,5 +1,5 @@
 import { useFormContext, useWatch } from 'react-hook-form';
-import FormInput from '../../shared/FormInput/FormInput'
+import FormInput from '../../../shared/FormInput/FormInput'
 import './ResumeFormPage2.link.css';
 import React from "react";
 
@@ -40,8 +40,9 @@ const ResumeFormPage2 = ({ isVisible }) => {
 
     return (
         <div className={`resume-form-page ${isVisible ? 'visible' : 'hidden'}`}>
-            {/* {JSON.stringify(experiences) } */}
-            {/* {JSON.stringify(watchedValues) } */}
+            <h2 className='resume-form-page-title'>
+                <span className='text-warning'>E</span>
+                xperience Section</h2>
             {experiences.map((exp, index) => (
                 <React.Fragment key={index}>
                     {getValues().experiences?.[index]?.company !== null && (

@@ -6,7 +6,7 @@ const Footer = () => {
         <footer className="footer mt-auto">
             <div className="container footer-grid">
                 <div>
-                    <h3>ResumeCraft</h3>
+                    <h3>NextStep AI</h3>
                     <p>Your professional resume builder.</p>
                 </div>
 

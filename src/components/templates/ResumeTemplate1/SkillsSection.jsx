@@ -1,12 +1,19 @@
 import React from 'react';
 import EditableElement from './EditableElement';
 
+const skillsData = [
+    { title: "HTML / CSS" },
+    { title: "JavaScript / React" },
+    { title: "Node.js / MongoDB" },
+    { title: "UI Design" }
+];
+
 const SkillsSection = ({ 
     activeElement, 
     onElementClick, 
     onEdit, 
     onDelete, 
-    skills = ["HTML / CSS", "JavaScript / React", "Node.js / MongoDB", "UI Design"]
+    skills = skillsData
 }) => {
     return (
         <EditableElement
@@ -28,7 +35,7 @@ const SkillsSection = ({
                         onDelete={onDelete}
                         stopPropagation={true}
                     >
-                        <li>{skill}</li>
+                        <li>{skill.title}</li>
                     </EditableElement>
                 ))}
             </ul>

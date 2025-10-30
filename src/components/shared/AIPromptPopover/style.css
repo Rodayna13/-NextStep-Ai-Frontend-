@@ -76,3 +76,89 @@
     border: 1px solid #555;
     font-weight: 700;
 }
+
+.ai-prompt-send-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.ai-response-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.ai-response-header h4 {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.ai-response-content {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 12px;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.ai-response-content p {
+    margin: 0;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #4b5563;
+    word-wrap: break-word;
+}
+
+.ai-response-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.ai-response-btn {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    background: transparent;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.ai-accept-btn {
+    color: #10b981;
+}
+
+.ai-accept-btn:hover {
+    color: #059669;
+    text-decoration: none;
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.ai-undo-btn {
+    color: #6b7280;
+}
+
+.ai-undo-btn:hover {
+    color: #374151;
+    text-decoration: none;
+    background: rgba(107, 114, 128, 0.1);
+}
+
+.typing-cursor {
+    animation: blink 1s infinite;
+    color: #10b981;
+    font-weight: bold;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
