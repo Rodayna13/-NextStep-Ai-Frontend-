@@ -16,6 +16,11 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(0.9);
+  }
 }
 
 .logo-icon {
@@ -30,7 +35,7 @@
   font-family: "Playfair Display", "Georgia", serif;
   font-style: italic;
   letter-spacing: 0.6px;
-  text-shadow: 0 2px 8px rgba(96,122,251,0.12);
+  text-shadow: 0 2px 8px rgba(96, 122, 251, 0.12);
   color: #2f3a8f;
 }
 
@@ -48,6 +53,33 @@
 
 .nav-links a:hover {
   color: #607AFB;
+}
+
+.nav-links .new-feature {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+}
+
+.fire-icon {
+  font-size: 14px;
+  color: #ff6b35;
+  animation: flicker 1.5s infinite alternate;
+}
+
+@keyframes flicker {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
 }
 
 .nav-right {
@@ -68,7 +100,6 @@
 }
 
 .btn-primary {
-  padding: 8px 16px;
   background: #607AFB;
   border: none;
   color: #fff;
@@ -76,6 +107,44 @@
   cursor: pointer;
 }
 
-.btn-primary:hover {
-  background: #4e64d1;
+.btn-secondary {
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.btn-secondary:hover {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+.signup-btn {
+  height: 40px;
+}
+
+.logout-btn {
+  height: 40px;
+}
+
+.username-display {
+  color: #374151;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  background: #f9fafb;
+  border-radius: 5px;
+  height: 40px;
+
+  &:hover {
+    cursor: pointer;
+    background: #f3f4f6;
+    color: #607AFB;
+  }
 }

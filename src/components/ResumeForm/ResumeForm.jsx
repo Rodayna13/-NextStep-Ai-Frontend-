@@ -56,25 +56,28 @@ const ResumeForm = () => {
                 fullName: profile.fullName || '',
                 email: profile.email || profile.linkedinUrl || '',
                 about: profile.about || '',
-                location: profile.addressWithCountry || '',
+                // Support both LinkedIn (addressWithCountry) and CV extraction (location)
+                location: profile.location || profile.addressWithCountry || '',
                 jobTitle: profile.jobTitle || '',
                 summary: profile.summary || '',
                 mobileNumber: profile.mobileNumber || '',
                 profilePic: profile.profilePic || '',
                 educations: profile.educations?.map(edu => ({
                     ...edu,
-                    startDate: parseStartEndDate(edu.caption).startDate,
-                    endDate: parseStartEndDate(edu.caption).endDate
+                    // Support both formats: direct startDate/endDate or parsed from caption
+                    startDate: edu.startDate || parseStartEndDate(edu.caption).startDate,
+                    endDate: edu.endDate || parseStartEndDate(edu.caption).endDate
                 })) || [],
                 experiences: profile.experiences?.map(exp => ({
                     ...exp,
-                    company: exp.subComponents?.[0].title ? exp.title : null,
+                    company: exp.company || (exp.subComponents?.[0].title ? exp.title : null),
                     subComponents: exp.subComponents?.map((pos, idx) => ({
                         ...pos,
                         logo: idx === 0 ? exp.logo : pos.logo,
                         title: idx === 0 && pos.title ? pos.title : exp.title,
-                        startDate: parseStartEndDate(pos.caption).startDate || parseStartEndDate(exp.caption).startDate,
-                        endDate: parseStartEndDate(pos.caption).endDate || parseStartEndDate(exp.caption).endDate
+                        // Support both formats: direct dates or parsed from caption
+                        startDate: pos.startDate || parseStartEndDate(pos.caption).startDate || parseStartEndDate(exp.caption).startDate,
+                        endDate: pos.endDate || parseStartEndDate(pos.caption).endDate || parseStartEndDate(exp.caption).endDate
                     }))
                 })) || [],
                 skills: profile.skills || []
@@ -96,6 +99,9 @@ const ResumeForm = () => {
 
 
                 <ResumePreview colWidth={colWidth} setColWidth={setColWidth} />
+
+
+
             </div>
 
         </FormProvider>

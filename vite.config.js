@@ -4,4 +4,33 @@ import react from '@vitejs/plugin-react-swc'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  server: {
+    proxy: {
+      '/api/Auth': {
+        target: 'http://nextstepaiproject.runasp.net',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/api/ResumeAnalyzer/analyze': {
+        target: 'http://nextstepaiproject.runasp.net',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/api/SkillsAssessment/submit-answer': {
+        target: 'http://nextstepaiproject.runasp.net',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/api/SkillsAssessment/start-skills-assessment': {
+        target: 'http://nextstepaiproject.runasp.net',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/api/resume-enhance': {
+        target: 'http://backend-next-ai-5yxw.vercel.app',
+        changeOrigin: true,
+        secure: false,
+      }
+    }
+  }
 })

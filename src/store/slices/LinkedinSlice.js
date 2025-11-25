@@ -37,6 +37,11 @@ const LinkedinSlice = createSlice({
         },
         setViewModal(state, action) {
             state.viewModal = action.payload;
+        },
+        setProfile(state, action) {
+            state.profile = action.payload;
+            state.viewModal = false;
+            state.error = null;
         }
     },
     extraReducers: (builder) => {
@@ -64,6 +69,7 @@ export const {
     fetchProfileFailure,
     setViewModal,
     clearProfile,
+    setProfile,
 } = LinkedinSlice.actions;
 
 export default LinkedinSlice.reducer;

@@ -1,0 +1,485 @@
+.google-drive-picker {
+    min-height: 100vh;
+    background: #667eea;
+    padding: 20px;
+}
+
+.google-drive-picker .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.picker-header {
+    background: #4285f4;
+    color: white;
+    padding: 40px;
+    text-align: center;
+}
+
+.picker-header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.picker-header p {
+    margin: 0;
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* Authentication Section */
+.auth-section {
+    padding: 30px 40px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.user-input {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.email-input {
+    flex: 1;
+    min-width: 300px;
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.email-input:focus {
+    outline: none;
+    border-color: #4285f4;
+}
+
+.auth-btn {
+    background: #4285f4;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+    white-space: nowrap;
+}
+
+.auth-btn:hover:not(:disabled) {
+    background: #3367d6;
+}
+
+.auth-btn:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+}
+
+.auth-status {
+    background: #d1fae5;
+    color: #065f46;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+/* Navigation Section */
+.navigation-section {
+    padding: 20px 40px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.nav-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.nav-btn {
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.nav-btn:hover:not(:disabled) {
+    background: #e5e7eb;
+}
+
+.nav-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fef3c7;
+    color: #92400e;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    flex-wrap: wrap;
+}
+
+.breadcrumb span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.breadcrumb .current-folder {
+    background: #fcd34d;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+}
+
+.search-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.search-input {
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    min-width: 200px;
+}
+
+.search-btn {
+    background: #34a853;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.search-btn:hover:not(:disabled) {
+    background: #2d8a47;
+}
+
+.search-btn:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+}
+
+/* Files Section */
+.files-section {
+    padding: 40px;
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.folders-grid h3 {
+    margin: 0 0 20px 0;
+    color: #374151;
+    font-size: 1.25rem;
+}
+
+.files-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.google-drive-picker .file-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.google-drive-picker .file-card:hover {
+    border-color: #4285f4;
+    box-shadow: 0 4px 12px rgba(66, 133, 244, 0.1);
+    transform: translateY(-2px);
+}
+
+.folder-card {
+    background: #fef7ff;
+    border-color: #e879f9;
+}
+
+.folder-card:hover {
+    background: #fae8ff;
+    border-color: #d946ef;
+}
+
+.file-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.file-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.file-name {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file-meta {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.select-btn {
+    background: #4285f4;
+    color: white;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+    flex-shrink: 0;
+}
+
+.select-btn:hover:not(:disabled) {
+    background: #3367d6;
+    transform: scale(1.1);
+}
+
+.select-btn:disabled {
+    background: #34a853;
+    cursor: not-allowed;
+}
+
+/* Selected Files Section */
+.selected-section {
+    background: #f9fafb;
+    padding: 30px 40px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.selected-section h3 {
+    margin: 0 0 20px 0;
+    color: #374151;
+    font-size: 1.25rem;
+}
+
+.selected-files {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.selected-file {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.selected-file-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 1;
+    min-width: 0;
+}
+
+.selected-file-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.selected-file-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.selected-file-name {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.selected-file-meta {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.url-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.url-btn {
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+
+.view-btn:hover {
+    background: #dbeafe;
+    border-color: #3b82f6;
+    color: #1e40af;
+}
+
+.download-btn:hover {
+    background: #dcfce7;
+    border-color: #16a34a;
+    color: #15803d;
+}
+
+.remove-btn {
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
+    color: #dc2626;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.remove-btn:hover {
+    background: #fecaca;
+    border-color: #f87171;
+}
+
+/* Continue Section */
+.continue-section {
+    margin-top: 30px;
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.continue-btn {
+    background: #4285f4;
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(66, 133, 244, 0.2);
+}
+
+.continue-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(66, 133, 244, 0.3);
+}
+
+/* Loading & Empty States */
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: #6b7280;
+    font-size: 1.1rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6b7280;
+    font-size: 1.1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .google-drive-picker {
+        padding: 10px;
+    }
+
+    .picker-header {
+        padding: 30px 20px;
+    }
+
+    .picker-header h1 {
+        font-size: 2rem;
+    }
+
+    .auth-section,
+    .navigation-section,
+    .files-section,
+    .selected-section {
+        padding: 20px;
+    }
+
+    .user-input {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .email-input {
+        min-width: auto;
+    }
+
+    .navigation-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .files-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .selected-file {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .url-actions {
+        justify-content: center;
+        margin-top: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .url-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .url-btn {
+        width: 100%;
+        text-align: center;
+    }
+}

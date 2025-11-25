@@ -14,7 +14,7 @@ const useSpeak = () => {
         if (!text) return '';
         const prompt = text;
         const url = `${'https://text.pollinations.ai'}/${encodeURIComponent(prompt)}?model=openai-audio&voice=${voice}&token=nPJv5oK3kjl4x32Y`;
-
+        console.log(text, voice)
         setCurrentText(text);
 
         try {
@@ -25,9 +25,7 @@ const useSpeak = () => {
 
             if (audioRef.current) {
                 audioRef.current.src = audioUrl;
-
                 audioRef.current.playbackRate = 0.95;
-
                 await audioRef.current.play();
                 setIsPlaying(true);
             }

@@ -48,3 +48,28 @@
 .btn-outline:hover {
     background: #f1f3ff;
 }
+
+.btn-with-badge {
+    position: relative;
+}
+
+.fire-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    color: #ff6b35;
+    font-size: 22px;
+    animation: fire-pulse 1.5s infinite alternate;
+    filter: drop-shadow(0 0 4px rgba(255, 107, 53, 0.6));
+}
+
+@keyframes fire-pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.15);
+        opacity: 0.85;
+    }
+}

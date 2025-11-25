@@ -3,6 +3,7 @@ import "./AiVoiceChat.css";
 import { useSpeechRecognition } from "../../hooks/useSpeechRecognition";
 import axios from "axios";
 import { apiEndpoints } from "../../api/endpoints";
+import LiveVoiceChatControls from './LiveVoiceChatControls';
 
 export default function AiVoiceChat({ isVisible, sessionId, text }) {
   const [isAiSpeaking, setIsAiSpeaking] = useState(true);
@@ -65,34 +66,45 @@ export default function AiVoiceChat({ isVisible, sessionId, text }) {
     }
   }, [speechRecognition.transcript, isUserSpeaking]);
 
+
+
+
+  const handleUserSpeakBtn = () => {
+
+    if (!isUserSpeaking) {
+      speechRecognition.stopRecognition();
+
+      setTimeout(() => {
+        speechRecognition.startRecognition();
+      }, 100);
+
+      setIsUserSpeaking(true);
+    } else {
+      setIsUserSpeaking(false);
+      speechRecognition.stopRecognition();
+    }
+
+    setIsAiSpeaking(false);
+
+  }
+  const handleAISpeakBtn = () => {
+    setIsAiSpeaking(!isAiSpeaking);
+    setIsUserSpeaking(false);
+  }
+
   return (
-    <div
-      className="main-container"
-      style={{ display: isVisible ? "flex" : "none" }}
-    >
+    <div className={`main-container ${isVisible ? "visible" : "hidden"}`}>
       <audio
         ref={audioRef}
         onEnded={handleAudioEnd}
-        style={{ display: "none" }}
+        className="audio-hidden"
         controls
         autoPlay={true}
       />
       <div className="split">
         {/* ---------- Left Side (User) ---------- */}
-        <div
-          className={`left flex-col items-center justify-center gap-8 ${
-            isUserSpeaking ? "speaking" : ""
-          }`}
-        >
-          <div
-            className={`avatar user-avatar ${
-              isUserSpeaking ? "speaking-avatar" : ""
-            }`}
-            style={{
-              backgroundImage:
-                'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCoVbGVJ2dMzVCXv-3cDzhSVNuIPIOejlOeMWcIFb29-uZ_MOxFkdM_LLatTUeMZR32JZlutmQZSOg7TSHAdKqfUOawDwMe4C-VTQmlVGEL5ruOh9Ar3JPrDuQsz-EoK2WRXlUh2OX-Oh256PhSkBm1iC5jQ4zpJYSsLSrOCz_jcN0gLyF6clsgDwFwYTH1NjjlH0l70ZjHXui4Q_WkM1R3LdvGgeKY7_ZA3QMQgAkbN2TN_obgr96YuOOgBJEbTUgcp5yt3_0Bkqo")',
-            }}
-          ></div>
+        <div className={`left flex-col items-center justify-center gap-8 ${isUserSpeaking ? "speaking" : ""}`}>
+          <div className={`avatar user-avatar user-avatar-bg ${isUserSpeaking ? "speaking-avatar" : ""}`} />
           <div className="text-center">
             <p className="user-name">You</p>
             <p className="user-status">
@@ -102,74 +114,24 @@ export default function AiVoiceChat({ isVisible, sessionId, text }) {
           <button
             className="mic-button"
             title="Push-to-Talk"
-            onClick={() => {
-              if (!isUserSpeaking) {
-                speechRecognition.stopRecognition();
-
-                setTimeout(() => {
-                  speechRecognition.startRecognition();
-                }, 100);
-
-                setIsUserSpeaking(true);
-              } else {
-                setIsUserSpeaking(false);
-                speechRecognition.stopRecognition();
-              }
-
-              setIsAiSpeaking(false);
-            }}
+            onClick={handleUserSpeakBtn}
           >
             <span className="material-symbols-outlined">mic</span>
           </button>
           <div className="volume-bar">
-            <div
-              className="volume-bar-fill user-fill"
-              style={{ height: isUserSpeaking ? "60%" : "10%" }}
-            ></div>
+            <div className="volume-bar-fill user-fill"></div>
           </div>
           transcript :
-          <div
-            style={{
-              display:
-                speechRecognition.interim || speechRecognition.transcript
-                  ? "block"
-                  : "none",
-              background: "rgba(255,255,255,0.35)",
-              borderRadius: "1rem",
-              boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
-              backdropFilter: "blur(8px)",
-              padding: "0.75rem 1.25rem",
-              margin: "0.5rem 0",
-              border: "1px solid rgba(255,255,255,0.5)",
-              color: "#222",
-              fontWeight: 500,
-              fontSize: "1.1rem",
-              letterSpacing: "0.01em",
-              textShadow: "0 2px 8px rgba(0,0,0,0.04)",
-            }}
-          >
+          <div className={`interim-transcript ${speechRecognition.interim || speechRecognition.transcript ? "visible" : ""
+            }`}>
             {speechRecognition.transcript}
-            <span style={{ color: "#aaa" }}>
-              {speechRecognition.interim && " " + speechRecognition.interim}
-            </span>
+            <span className="interim-subtext">{speechRecognition.interim && " " + speechRecognition.interim}</span>
           </div>
         </div>
 
         {/* ---------- Right Side (AI) ---------- */}
-        <div
-          className={`right flex-col items-center justify-center gap-8 ${
-            isAiSpeaking ? "speaking" : ""
-          }`}
-        >
-          <div
-            className={`avatar ai-avatar ${
-              isAiSpeaking ? "speaking-avatar" : ""
-            }`}
-            style={{
-              backgroundImage:
-                'url("https://lh3.googleusercontent.com/aida-public/AB6AXuB17O8_JtZ0602cyoM6TGbO_A13eexqB1xKziTqZEIrryHyIp2ltacJcfuluVQpRmAlK1vEX_2gVryf5i0azoFVxuZUcoU236NfCs6WaOTXRxfD7xOoKMA3LzP30zAhCQuGggCu_-fKqRa4gK3LdDLaB4M4yF5RvLWI5rImOxZFqBxKsJibAO6fN14CgFR0FvZkOypv-h8-seBiOBlwqHPei0CClDiZwF1LTu9g8mr89ccqGlTKBAB66LEBOtLRAt8u65cHGuCXo88")',
-            }}
-          ></div>
+        <div className={`right flex-col items-center justify-center gap-8 ${isAiSpeaking ? "speaking" : ""}`}>
+          <div className={`avatar ai-avatar ai-avatar-bg ${isAiSpeaking ? "speaking-avatar" : ""}`} />
 
           <div className="text-center">
             <p className="ai-name">AI</p>
@@ -182,10 +144,7 @@ export default function AiVoiceChat({ isVisible, sessionId, text }) {
           <button
             className="ai-speak-button"
             title="Toggle AI Speaking"
-            onClick={() => {
-              setIsAiSpeaking(!isAiSpeaking);
-              setIsUserSpeaking(false);
-            }}
+            onClick={handleAISpeakBtn}
           >
             <span className="material-symbols-outlined">
               {isAiSpeaking ? "volume_up" : "volume_off"}
@@ -193,10 +152,7 @@ export default function AiVoiceChat({ isVisible, sessionId, text }) {
           </button>
 
           <div className="volume-bar">
-            <div
-              className="volume-bar-fill ai-fill"
-              style={{ height: isAiSpeaking ? "70%" : "10%" }}
-            ></div>
+            <div className="volume-bar-fill ai-fill"></div>
           </div>
         </div>
       </div>
@@ -205,60 +161,17 @@ export default function AiVoiceChat({ isVisible, sessionId, text }) {
       {isLoading && (
         <div className="waveform">
           {Array.from({ length: 10 }, (_, i) => (
-            <div
-              key={i}
-              className="waveform-bar"
-              style={{ "--i": i + 1 }}
-            ></div>
+            <div key={i} className={`waveform-bar i-${i + 1}`}></div>
           ))}
         </div>
       )}
 
       <p className="text-center connected">Connected</p>
 
-      {/* ---------- Transcript ---------- */}
-      <div className="transcript-container" id="transcript-container">
-        <div className="message">
-          <p>
-            <strong className="user-status">You:</strong> Hey, can you help me
-            brainstorm some ideas for a new project?
-          </p>
-        </div>
-        <div className="message">
-          <p>
-            <strong className="ai-status">AI:</strong> Of course! I'd be happy
-            to. What kind of project are you thinking about?
-          </p>
-        </div>
-      </div>
+
 
       {/* ---------- Controls ---------- */}
-      <div className="bottom-controls">
-        <button title="Mute">
-          <div>
-            <span className="material-symbols-outlined">mic_off</span>
-          </div>
-        </button>
-
-        <button
-          title="Show Transcript"
-          onClick={() =>
-            document
-              .getElementById("transcript-container")
-              .classList.toggle("transcript-visible")
-          }
-        >
-          <div>
-            <span className="material-symbols-outlined">subtitles</span>
-          </div>
-        </button>
-
-        <button className="end-call" title="End Call">
-          <div>
-            <span className="material-symbols-outlined">call_end</span>
-          </div>
-        </button>
-      </div>
+      <LiveVoiceChatControls />
     </div>
   );
 }

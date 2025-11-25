@@ -39,13 +39,13 @@ const AIPromptPopover = React.forwardRef(({
 
         try {
             let userPrompt = `${prompt}. The context is that this is a ${label} field in a resume form. The current value is: ${inputValue || getValues()[name] || ""}`;
-            
+
             // If name includes "About" or "Summary", add skills, educations, and experiences to the prompt
             if (name && (name.toLowerCase().includes('about') || name.toLowerCase().includes('summary'))) {
                 const skills = getValues('skills');
                 const educations = getValues('educations');
                 const experiences = getValues('experiences');
-                
+
                 if (skills) {
                     userPrompt += `. Skills: ${skills}`;
                 }
@@ -56,6 +56,8 @@ const AIPromptPopover = React.forwardRef(({
                     userPrompt += `. Experiences: ${JSON.stringify(experiences)}`;
                 }
             }
+
+            console.log('apiEndpoints.enhanceInputWithAI' , apiEndpoints.enhanceInputWithAI)
 
             const response = await axios.post(apiEndpoints.enhanceInputWithAI, {
                 prompt: userPrompt
@@ -96,7 +98,7 @@ const AIPromptPopover = React.forwardRef(({
             onKeyDown={({ key: k }) => {
                 k === 'Escape' && onClose()
             }}
-     
+
         >
             <button
                 type="button"

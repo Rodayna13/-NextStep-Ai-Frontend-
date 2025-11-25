@@ -1,237 +1,85 @@
-import axios from "axios";
-import { useState } from "react";
-import { useSpeechRecognition } from "../../hooks/useSpeechRecognition";
-import { apiEndpoints } from './../../api/endpoints';
-import LiveVoiceChat from './../../components/LiveVoiceChat/LiveVoiceChat';
+import { useCallback, useState } from "react";
+import InterviewPracticeForm from '../../components/InterviewPracticeForm';
+import InterviewPracticeSession from '../../components/InterviewPracticeSession';
+import { generateSessionId } from '../../utils/sessionUtils';
 import "./InterviewPractice.css";
 
-// Helper to read image file and set preview
-const readImageFile = (file, setPreview) => {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-        setPreview({
-            url: event.target.result,
-            name: file.name
-        });
-    };
-    reader.readAsDataURL(file);
-};
-
 const InterviewPractice = () => {
-    const [cvOption, setCvOption] = useState("my-cv");
-    const [uploadedImage, setUploadedImage] = useState(null);
-    const [isDragging, setIsDragging] = useState(false);
-    const [uploadedFile, setUploadedFile] = useState(null);
-    const [ocrResult, setOcrResult] = useState(null);
-    const [jobDescription, setJobDescription] = useState("");
-    const [currentQuestion, setCurrentQuestion] = useState(null);
-    const [sessionId, setSessionId] = useState(null)
-    // Drag and drop handlers
-    const handleDragOver = (e) => {
-        e.preventDefault();
-        setIsDragging(true);
-    };
-    const handleDragLeave = (e) => {
-        e.preventDefault();
-        setIsDragging(false);
-    };
-    const handleDrop = (e) => {
-        e.preventDefault();
-        setIsDragging(false);
-        const file = e.dataTransfer.files?.[0];
-        handleImageSelect(file);
-    };
-
-    // File input handler
-    const handleFileInput = (e) => {
-        const file = e.target.files?.[0];
-        handleImageSelect(file);
-    };
-
-    // Image select logic
-    const handleImageSelect = (file) => {
-        if (file && file.type.startsWith('image/')) {
-            readImageFile(file, setUploadedImage);
-            setUploadedFile(file);
-        }
-    };
-
-    // Remove image
-    const removeImage = () => {
-        setUploadedImage(null);
-        setUploadedFile(null);
-        setOcrResult(null);
-    };
-
-    // OCR upload
-    const handleOCRUpload = async (file) => {
-        if (!file) return;
-        const formData = new FormData();
-        formData.append('file', file);
-        try {
-            const response = await fetch(apiEndpoints.ocr, {
-                method: 'POST',
-                body: formData,
-            });
-            if (!response.ok) throw new Error('Failed to upload image');
-            const result = await response.json();
-            setOcrResult(result);
-        } catch (error) {
-            setOcrResult(null);
-            console.error('Error uploading image:', error);
-        }
-    };
-
-    // Submit handler
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (uploadedFile) {
-            await handleOCRUpload(uploadedFile);
-        }
+    const [sessionId, setSessionId] = useState(null);
+    const [error, setError] = useState(null);
+    const [basedOnJobDescription, setBasedOnJobDescription] = useState(null)
+    const [cvData, setCvData] = useState(null)
+    const handleStartPractice = useCallback(async (formData) => {
 
 
-        const xsessionId = `sess-${Date.now()}-${Math.floor(Math.random() * 900000 + 100000)}`;
-        setSessionId(xsessionId);
+        const user = JSON.parse(localStorage.getItem('user'));
+        const userData = {
+            name: user?.firstName + ' ' + user?.lastName || 'John Doe',
+            email: user?.email || 'john.doe@email.com',
+            avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCN2DrjjFPrSN-Fp7l9nUUAX1MuEiiUpqb5sptN_wa7mlw5kAJpue3fFrqXNogEdyfj9pZk0tog8LFiPMzCj3sTHHiNns7U2yCVBK1dWg06DilPpBTUq8sjtXhYc9IB2FWTW9r3WxWQDwHIRfADfhYkxdOvyZckECM3yHpYqJQU3w071zpIaku0BEJ3TrMP0ZeUkD4PlJdVYB0AMhGFuIjT_p7I1o6XbJy0d3wCO2uu0M0OAE1KFLTXWJCBJxDuULlbms6ZLaB9iyhP'
+        };
+      
+        const fetchCVData = async () => {
 
 
-        try {
-            const response = await axios.post(`${apiEndpoints.InterviewPractice}/start`, { sessionId: xsessionId });
-            console.log('Interview practice started:', response.data);
-            setCurrentQuestion(response.data.question);
-        } catch (error) {
-            console.error('Error starting interview practice:', error);
+            if (userData.email && userData.email !== 'john.doe@email.com') {
+                try {
+                    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/cv/${userData.email}`);
+                    console.log('response:', response);
+                    if (response.ok) {
+                        const cvData = await response.json();
+                        console.log('Profile CV data:', cvData);
+                        setCvData(cvData);
+                    } else {
+                        console.log('CV not found for this email');
+                    }
+                } catch (error) {
+                    console.error('Error fetching CV data:', error);
+                }
+            }
+        };
+
+        console.log(formData)
+        setError(null);
+        const newSessionId = generateSessionId();
+        const basedOnCV = formData.cvOption === "my-cv"
+        console.log("formData.extractedJobData", formData.extractedJobData)
+        if (!basedOnCV) {
+            setBasedOnJobDescription(formData.extractedJobData);
+        } else {
+            fetchCVData();
+            setBasedOnJobDescription(null);
         }
 
 
 
-
-    };
-
-    const [isLoading, setIsLoading] = useState(false);
+        setSessionId(newSessionId);
 
 
+    }, []);
 
+    const isSessionActive = sessionId;
 
-    if (currentQuestion) {
+    if (isSessionActive) {
         return (
             <div className="interview-practice-container">
-
-                <LiveVoiceChat
-
+                <InterviewPracticeSession
                     sessionId={sessionId}
-                    isVisible={currentQuestion}
-                    isLoading={isLoading}
-                    text={currentQuestion} />
-            </div>
-        )
+                    jobDescription={basedOnJobDescription}
+                    cvData={cvData}
+                />
+            </div >
+        );
     }
 
     return (
         <div className="interview-practice-container">
-
-
-            <div className="content">
-                here
-                {/* {speechRecognition.transcript} */}
-                {/* <Demo /> */}
-                <div className="content-inner">
-
-                    <h2 className="section-title">Create your CV</h2>
-                    <p className="paragraph">
-                        To start your interview practice, you need to have a CV. You can either use your existing CV or build one
-                        from scratch using our CV builder.
-                    </p>
-
-                    <div className="radio-group">
-                        <label className="radio-label">
-                            <input
-                                type="radio"
-                                name="cv-option"
-                                checked={cvOption === "my-cv"}
-                                onChange={() => setCvOption("my-cv")}
-                            />
-                            <div>
-                                <p>Based on My CV</p>
-                            </div>
-                        </label>
-
-                        <label className="radio-label">
-                            <input
-                                type="radio"
-                                name="cv-option"
-                                checked={cvOption === "job-description"}
-                                onChange={() => setCvOption("job-description")}
-                            />
-                            <div>
-                                <p>Based on Job Description</p>
-                            </div>
-                        </label>
-                    </div>
-
-                    <p className="hint">Your current CV on file will be used for this practice.</p>
-
-                    {cvOption === "job-description" && (
-                        <div
-                            className={`textarea-container ${isDragging ? 'dragging' : ''}`}
-                            onDragOver={handleDragOver}
-                            onDragLeave={handleDragLeave}
-                            onDrop={handleDrop}
-                        >
-                            <div className="textarea-wrapper">
-                                <textarea
-                                    placeholder="Enter Job Description or Job URL"
-                                    rows={6}
-                                    cols={50}
-                                    value={jobDescription}
-                                    onChange={e => setJobDescription(e.target.value)}
-                                ></textarea>
-                                {uploadedImage && (
-                                    <div className="image-thumbnail">
-                                        <img src={uploadedImage.url} alt={uploadedImage.name} />
-                                        <button
-                                            className="remove-image-btn"
-                                            onClick={removeImage}
-                                            aria-label="Remove image"
-                                        >
-                                            ×
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-                            <div className="file-upload-section">
-                                <input
-                                    type="file"
-                                    id="file-upload"
-                                    accept="image/*"
-                                    onChange={handleFileInput}
-                                    style={{ display: 'none' }}
-                                />
-                                <label htmlFor="file-upload" className="upload-label">
-                                    📎 Attach image
-                                </label>
-                                <span className="drag-hint">or drag and drop</span>
-                            </div>
-                            {/* OCR result feedback */}
-                            {ocrResult && (
-                                <div className="ocr-result">
-                                    <strong>OCR Result:</strong>
-                                    <pre>{JSON.stringify(ocrResult, null, 2)}</pre>
-                                </div>
-                            )}
-                        </div>
-                    )}
-
-                    <div className="btn-container">
-                        <button className="start-btn" onClick={handleSubmit}>Start Practice</button>
-                        {/* {currentQuestion && (
-                            <Music text={currentQuestion} />
-                        )} */}
-                    </div>
-
-
-
+            {error && (
+                <div className="error-banner">
+                    {error}
                 </div>
-            </div>
+            )}
+            <InterviewPracticeForm onStartPractice={handleStartPractice} />
         </div>
     );
 };

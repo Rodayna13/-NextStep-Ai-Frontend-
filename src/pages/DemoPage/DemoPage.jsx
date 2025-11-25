@@ -1,157 +1,181 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useState } from 'react';
+import axios from 'axios';
+import { apiEndpoints } from '../../api/endpoints';
+import CustomAssistant from '../../components/CustomAssistant/CustomAssistant';
+import '../../components/LiveVoiceChat/AIVoiceChat.css';
+import useSpeak from '../../hooks/useSpeak';
 import { useSpeechRecognition } from '../../hooks/useSpeechRecognition';
-import useSpeak from './../../hooks/useSpeak';
-import useTranscription from './handleTranscription';
-import VoiceOrb from '../../components/VoiceOrb';
+import AIPanel from './components/AIPanel';
+import AnalysisResult from './components/AnalysisResult';
+import ControlPanel from './components/ControlPanel';
+import UserPanel from './components/UserPanel';
+import Waveform from './components/Waveform';
+import { useInterviewSession } from './hooks/useInterviewSession';
+import { generateSystemPrompt, getInitialGreeting } from './utils/promptGenerator';
 
 const DemoPage = () => {
-    const speechRecognition = useSpeechRecognition();
-    const { handleSpeak, currentText, isPlaying, audioRef, handleAudioEnd } = useSpeak();
-    const { transcribeAudioSimple } = useTranscription();
+    const [showConfig, setShowConfig] = useState(true);
+    const [analysisResult, setAnalysisResult] = useState(null);
+    const [isAnalyzing, setIsAnalyzing] = useState(false);
+    const { handleSpeak, isPlaying, audioRef, handleAudioEnd } = useSpeak();
+    const speechRecognition = useSpeechRecognition({ defaultLanguage: 'ar-EG' });
 
-    const [history, setHistory] = useState([
-        { role: 'system', content: 'act as interviewer coach in arabic language with egyptian accent' },
-        { role: 'assistant', content: 'ask your first question about js' }
-    ]);
+    const {
+        history,
+        isProcessing,
+        setAssistantConfig,
+        processAIResponse
+    } = useInterviewSession(handleSpeak, speechRecognition);
 
-    const [isProcessing, setIsProcessing] = useState(false);
-    const hasProcessedTranscript = useRef(false);
+    const handleEndCall = async () => {
+        if (history.length < 2) {
+            alert('No conversation to analyze yet!');
+            return;
+        }
 
-    // Process AI response
-    const processAIResponse = useCallback(async (conversationHistory) => {
-        if (isProcessing) return;
-
-        setIsProcessing(true);
+        setIsAnalyzing(true);
         try {
-            const conversationText = conversationHistory
-                .map(item => typeof item === 'string' ? item : `${item.role}: ${item.content}`)
-                .join('\n');
+            // Get user email from localStorage or use default
+            const userEmail = localStorage.getItem('userEmail') || 'guest@example.com';
 
-            const audioBlob = await handleSpeak(conversationText, 'nova');
-            const botResponse = await transcribeAudioSimple(audioBlob);
+            const response = await axios.post(
+                `${apiEndpoints.BASE_URL}/api/analyze-chat`,
+                {
+                    userEmail,
+                    conversation: history.filter(msg => msg.role !== 'system')
+                }
+            );
 
-            if (botResponse) {
-                setHistory(prev => [...prev, { role: 'assistant', content: botResponse }]);
+            if (response.data.success) {
+                setAnalysisResult(response.data.analysis);
+            } else {
+                alert('Failed to analyze conversation');
             }
         } catch (error) {
-            console.error('Error processing AI response:', error);
+            console.error('❌ Analysis error:', error);
+            alert('Error analyzing conversation: ' + error.message);
         } finally {
-            setIsProcessing(false);
-        }
-    }, [isProcessing, handleSpeak, transcribeAudioSimple]);
-
-    // Initialize conversation
-    useEffect(() => {
-        processAIResponse(history);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    // Handle user speech completion
-    useEffect(() => {
-        if (
-            speechRecognition.isRecording &&
-            speechRecognition.transcript &&
-            !speechRecognition.isSpeaking &&
-            !isProcessing &&
-            !hasProcessedTranscript.current
-        ) {
-            hasProcessedTranscript.current = true;
-
-            const newHistory = [
-                ...history,
-                { role: 'user', content: speechRecognition.transcript }
-            ];
-
-            setHistory(newHistory);
-            speechRecognition.stopRecognition();
-
-            // Process AI response after a short delay to ensure state is updated
-            setTimeout(() => {
-                processAIResponse(newHistory);
-            }, 100);
-        }
-
-        // Reset flag when recording stops
-        if (!speechRecognition.isRecording) {
-            hasProcessedTranscript.current = false;
-        }
-    }, [
-        speechRecognition.isRecording,
-        speechRecognition.transcript,
-        speechRecognition.isSpeaking,
-        isProcessing,
-        history,
-        speechRecognition,
-        processAIResponse
-    ]);
-
-    const startRecording = () => {
-        if (!isProcessing && !isPlaying) {
-            audioRef.current?.pause();
-            audioRef.current.currentTime = 0;
-            speechRecognition.resetRecognition();
-            speechRecognition.startRecognition();
+            setIsAnalyzing(false);
         }
     };
 
+    const handleStartSession = (config) => {
+        setAssistantConfig(config);
 
+        // Update speech recognition language
+        if (config.language !== speechRecognition.defaultLanguage) {
+            speechRecognition.defaultLanguage = config.language;
+        }
 
+        setShowConfig(false);
 
+        // Start AI speaking with greeting
+        setTimeout(() => {
+            processAIResponse([
+                {
+                    role: "system",
+                    content: generateSystemPrompt(config)
+                },
+                {
+                    role: "assistant",
+                    content: getInitialGreeting(config.language)
+                }
+            ]);
+        }, 100);
+    };
+
+    if (showConfig) {
+        return <CustomAssistant onStartSession={handleStartSession} />;
+    }
     return (
-        <div className="demo-page">
-
-            <VoiceOrb name="Nova" description="Bright and inquisitive" active={isPlaying} />
-
-            <div className="current-status">
-                {speechRecognition.interim && (
-                    <div style={{ marginBottom: '10px', fontStyle: 'italic', color: '#666' }}>
-                        <strong>Listening:</strong> {speechRecognition.interim}
-                    </div>
-                )}
-
-                {speechRecognition.transcript && (
-                    <div className="demo-page__transcript" style={{
-                        marginBottom: '10px',
-                        padding: '10px',
-                        backgroundColor: '#fff3cd',
-                        border: '1px solid #ffeaa7',
-                        borderRadius: '5px'
-                    }}>
-                        <p><strong>Current Transcript:</strong> {speechRecognition.transcript}</p>
-                    </div>
-                )}
-            </div>
-
+        <div className="main-container visible">
             <audio
                 ref={audioRef}
                 onEnded={handleAudioEnd}
-                className="demo-page__audio"
+                className="audio-hidden"
+                controls
+                autoPlay={true}
             />
-            <div className="bottom-controls">
-                <button title="Mic On" onClick={startRecording}>
-                    <div>
-                        <span className="material-symbols-outlined">mic</span>
-                    </div>
-                </button>
 
-                <button
-                    title="Show Transcript"
-                    onClick={() =>
-                        document
-                            .getElementById("transcript-container")
-                            .classList.toggle("transcript-visible")
-                    }
-                >
-                </button>
+            <div className="split">
+                <UserPanel
+                    isRecording={speechRecognition.isRecording}
+                    transcript={speechRecognition.transcript}
+                    interim={speechRecognition.interim}
+                    onStartRecording={() => {
+                        console.log('🎤 Mic button clicked, isRecording:', speechRecognition.isRecording);
+                        if (!isProcessing && !isPlaying) {
+                            if (speechRecognition.isRecording) {
+                                // Stop recording
+                                console.log('⏹️ Stopping recording');
+                                speechRecognition.stopRecognition();
+                            } else {
+                                // Start recording
+                                console.log('▶️ Starting recording');
+                                audioRef.current?.pause();
+                                audioRef.current.currentTime = 0;
+                                speechRecognition.resetRecognition();
+                                speechRecognition.startRecognition();
+                            }
+                        }
+                    }}
+                />
 
-                <button className="end-call" title="End Call">
-                    <div>
-                        <span className="material-symbols-outlined">call_end</span>
-                    </div>
-                </button>
+                <AIPanel
+                    isPlaying={isPlaying}
+                    audioRef={audioRef}
+                />
             </div>
+
+            <Waveform isVisible={isProcessing} />
+
+            <p className="text-center connected">Connected</p>
+
+            <ControlPanel
+                onStartRecording={() => {
+                    if (!isProcessing && !isPlaying) {
+                        audioRef.current?.pause();
+                        audioRef.current.currentTime = 0;
+                        speechRecognition.resetRecognition();
+                        speechRecognition.startRecognition();
+                    }
+                }}
+                onEndCall={handleEndCall}
+            />
+
+            {/* Analysis Result Modal */}
+            {analysisResult && (
+                <AnalysisResult 
+                    analysis={analysisResult} 
+                    onClose={() => setAnalysisResult(null)} 
+                />
+            )}
+
+            {/* Loading Overlay */}
+            {isAnalyzing && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0,0,0,0.7)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white',
+                    fontSize: '1.5rem',
+                    zIndex: 999
+                }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+                        <div style={{ fontSize: '2rem' }}>⏳</div>
+                        <div>جاري تحليل أدائك...</div>
+                        <div style={{ fontSize: '1rem', opacity: 0.8 }}>Analyzing your performance...</div>
+                    </div>
+                </div>
+            )}
         </div>
-    )
+    );
 }
 
 export default DemoPage
